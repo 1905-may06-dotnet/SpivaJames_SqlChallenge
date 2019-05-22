@@ -1,0 +1,72 @@
+CREATE TABLE Department (
+    ID INT IDENTITY PRIMARY KEY,
+    Name VARCHAR(50),
+    Location VARCHAR(50)
+)
+
+CREATE TABLE Employee (
+    ID INT IDENTITY PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    SSN VARCHAR(20),
+    DeptID INT FOREIGN KEY REFERENCES Department
+)
+
+CREATE TABLE EmpDetails (
+    ID INT IDENTITY PRIMARY KEY,
+    EmployeeID INT FOREIGN KEY REFERENCES Employee,
+    Salary FLOAT,
+    Address1 VARCHAR(50),
+    Address2 VARCHAR(50),
+    City VARCHAR(50),
+    State VARCHAR(50),
+    Country VARCHAR(50)
+)
+
+INSERT INTO Department VALUES ('Sales', '1F');
+INSERT INTO Department VALUES ('Administration', '2F');
+INSERT INTO Department VALUES ('Accounting', '3F');
+
+INSERT INTO Employee VALUES ('James', 'Bond', '123-45-6789', 1);
+INSERT INTO Employee VALUES ('John', 'Wick', '111-11-1111', 2);
+INSERT INTO Employee VALUES ('John', 'Smith', '321-54-9876', 3);
+
+INSERT INTO EmpDetails VALUES (1, 100000, 'Somewhere', null, 'London', 'in', 'England');
+INSERT INTO EmpDetails VALUES (2, 200000, 'Hotel', null, 'New York City', 'NY', 'US');
+INSERT INTO EmpDetails VALUES (3, 100000, 'Everywhere', null, 'Everycity', 'in', 'Everycountry');
+
+
+INSERT INTO Department VALUES ('Marketing', '4F');
+INSERT INTO Employee VALUES ('Tina', 'Smith', '222-22-2222', 4);
+INSERT INTO EmpDetails VALUES (4, 50000, 'Unspecified', null, 'Could', 'be', 'Anywhere');
+
+SELECT Name, FirstName, LastName FROM
+Employee JOIN Department
+ON DeptID = Department.ID
+WHERE Name = 'Marketing'
+
+SELECT Name, Sum(Salary) AS TotalSalary, Count(Employee.ID) AS NumberOfEmployees FROM
+Employee JOIN EmpDetails
+ON EmployeeID = Employee.ID
+JOIN Department
+ON DeptID = Department.ID
+WHERE Name = 'Marketing'
+GROUP BY Name
+
+SELECT Name, Sum(Salary) AS TotalSalary, Count(Employee.ID) AS NumberOfEmployees FROM
+Employee JOIN EmpDetails
+ON EmployeeID = Employee.ID
+JOIN Department
+ON DeptID = Department.ID
+GROUP BY Name
+
+UPDATE EmpDetails
+SET Salary = 90000
+FROM Employee
+WHERE EmployeeID = Employee.ID AND FirstName = 'Tina' AND LastName = 'Smith'
+
+
+
+DROP TABLE EmpDetails
+DROP TABLE Employee
+DROP TABLE Department
